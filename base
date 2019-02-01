@@ -1,4 +1,5 @@
-创建列 pd.Series([,,,,]，index=[])
+创建列 
+pd.Series([,,,,]，index=[])
 s = pd.Series([1,3,6,np.nan,44,1])  np.nan代表none
 
 创建日期序列

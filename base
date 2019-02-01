@@ -1,1 +1,91 @@
-print("hello world")
+创建列 pd.Series([,,,,]，index=[])
+s = pd.Series([1,3,6,np.nan,44,1])  np.nan代表none
+
+创建日期序列
+pd.date_range(起始日期, 终止日期, periods=None, freq=’D’, tz=None, normalize=False, name=None, closed=None)
+freq D H M 若为Y和M则返回本年最后一天或本月最后一天
+tz时区Asia Hong_Kong
+normalize 若为true则start和end被转化为0点
+name 时间索引的名称
+closed指start和end的区间范围 left左闭右开 right左开右闭 none闭区间 
+
+创建二维表格pd.DataFrame()
+随机数组
+dates = pd.date_range("20130101",periods=6)#
+df = pd.DataFrame(np.arange(24).reshape((6,4)),index=dates,columns=["A","B","C","D"])#
+字典传入
+df = pd.DataFrame({"columnname1":值或函数,"columnname2":值或函数,})
+df2 = pd.DataFrame({'A' : 1.,
+'B' : pd.Timestamp('20130102'),
+'C' : pd.Series(1,index=list(range(4)),dtype='float32'),
+'D' : np.array([3] * 4,dtype='int32'),
+'E' : pd.Categorical(["test","train","test","train"]),
+'F' : 'foo' })
+添加新列 index应保持一致
+df["E"] = pd.Series([1,2,3,4,5,6],index=pd.date_range("20130101",periods=6))
+
+显示某一列
+print(df["A"])
+显示某几行
+print(df[0:3])#左闭右开区间
+显示具体某行某列（根据标签）
+print(df.loc["20130102",["A","B"]])
+显示具体某个值 从0开始
+print(df.iloc[3,1])
+显示某几行和某几列 从0开始
+print(df.ix[:3,["A","C"]])
+
+筛选 值的大小 按行筛选
+print(df[df.A>8])
+
+改变值
+df.iloc[2,2] = 1111 行列从0开始
+df.iloc["20130101","C"] = 2222
+数据平滑
+df.A[df.A>4] = 0#某列的数字若大于4则改成0
+df.[df.A>4] = 0#某列的数字若大于4 则将该所在行的数字全部改成0
+
+丢掉缺失值
+df = df.dropna(axis=1,how="any"))
+# axis 0表示丢掉行 1表示丢掉列
+# how里面any表示只要有就丢掉该行 all表示全部是nan才丢掉该行
+填充缺失值
+df = df.fillna(value=0)
+检查是否存在缺失值 结果会给出true or false
+print(df.isnull())
+
+读取文件
+data = pd.read_csv("student.csv")#读取csv文件 需要把相应文件放在对应文件夹
+存储文件
+data.to_excel("student.excel.xlsx")#保存为excel文件 但会在首列添加序列索引
+
+合并
+res = pd.concat([df1,df2,df3],axis=0,ignore_index=True)#0为纵向合并 1为横向合并 ignoreindex可避免索引重复
+存在冲突时
+res = pd.concat([df1,df2],join="inner")# join默认为outer 即列值不存在显示nan 但inner只显示交集的列
+res = pd.concat([df1,df2],axis=1,join_axes=[df1.index])# 以第一个frame的index为主
+res1 = df1.append(df2,ignore_index=True)# 忽略index
+以某列作为合并依据
+res = pd.merge(le,ri,on="key")
+res = pd.merge(lef,right,on=["key1","key2"],how="left")#默认为只考虑交集部分inner
+#how 四种方式 inner取交集 outer取合集 未匹配的用nan代替 left以左边的为主 复制下来 right
+res = pd.merge(df1, df2, on='col1', how='outer', indicator=True)#可以显示出合并的方式 只合并了左边或右边
+print(res)
+res = pd.merge(df1, df2, on='col1', how='outer', indicator='indicator_column')#给indicator姓名
+
+画图 a.plot() plt.show()
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+data = pd.Series(np.random.randn(1000),index=np.arange(1000))
+data = data.cumsum()
+data.plot()
+plt.show()#画图
+
+data = pd.DataFrame(np.random.randn(1000,4),\
+index=np.arange(1000),\
+columns=list("ABCD"))
+data = data.cumsum()
+print(data.head(4))#显示前四个数据 若不填默认为5个
+data.plot()
+plt.show()#画图
